@@ -32,6 +32,8 @@ class ScreenInfo(PyObject):
                 "-offset_y",
                 str(self.offset_y),
             ]
+        elif platform == "linux_termux":
+            return
         else:
             path = f":0.0+{self.offset_x},{self.offset_y}"
             self.ffmpeg_parameters += ["x11grab"]

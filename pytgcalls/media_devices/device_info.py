@@ -15,6 +15,8 @@ class DeviceInfo:
         if platform == "win32":
             self.ffmpeg_parameters += ["dshow"]
             return f"audio={self.identifier}"
+        elif platform == "linux_termux":
+            self.ffmpeg_parameters += ["alsa"]
         else:
             self.ffmpeg_parameters += ["pulse"]
         return self.identifier

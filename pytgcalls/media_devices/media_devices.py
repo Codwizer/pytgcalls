@@ -48,6 +48,8 @@ class MediaDevices:
                     "-i",
                     "dummy",
                 ]
+            elif platform == "linux_termux":
+                return list_devices
             else:
                 commands = [
                     "pactl",
@@ -74,7 +76,7 @@ class MediaDevices:
             if platform == "win32":
                 list_raw = result.split("DirectShow audio devices")[1]
                 output = re.findall(
-                    '\\[.*?].*?"(.*?)".*?\n\\[.*?].*?"(.*?)"',
+                    '\[.*?].*?"(.*?)".*?n\[.*?].*?"(.*?)"',
                     list_raw,
                 )
                 for device in output:
@@ -86,7 +88,7 @@ class MediaDevices:
                     )
             else:
                 output = re.findall(
-                    "Name: (.*?)\n.*?Description: (.*?)\n",
+                    "Name: (.*?)n.*?Description: (.*?)n",
                     result,
                 )
                 for device in output:
