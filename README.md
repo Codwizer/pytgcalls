@@ -1,52 +1,10 @@
-<img src="https://raw.githubusercontent.com/pytgcalls/pytgcalls/master/.github/images/banner.png" alt="pytgcalls logo" />
-<p align="center">
-    <b>A simple and elegant client that allows you to make group voice calls quickly and easily.</b>
-    <br>
-    <a href="https://github.com/pytgcalls/pytgcalls/tree/master/example">
-        Examples
-    </a>
-    •
-    <a href="https://pytgcalls.github.io/">
-        Documentation
-    </a>
-    •
-    <a href="https://pypi.org/project/py-tgcalls/">
-        PyPi
-    </a>
-    •
-    <a href="https://t.me/pytgcallsnews">
-        Channel
-    </a>
-    •
-    <a href="https://t.me/pytgcallschat">
-        Chat
-    </a>
-</p>
 
 # PyTgCalls [![PyPI](https://img.shields.io/pypi/v/py-tgcalls.svg?logo=python&logoColor=%23959DA5&label=pypi&labelColor=%23282f37)](https://pypi.org/project/py-tgcalls/) [![Downloads](https://pepy.tech/badge/py-tgcalls)](https://pepy.tech/project/py-tgcalls)
 This project allows making Telegram call using MtProto and WebRTC, this is possible thanks to the power of [NTgCalls] library and [@evgeny-nadymov]
 
-#### Example Usage
-```python
-from pytgcalls import PyTgCalls
-from pytgcalls import idle
-from pytgcalls.types import MediaStream
-...
-chat_id = -1001185324811
-app = PyTgCalls(client)
-app.start()
-app.play(
-    chat_id,
-    MediaStream(
-        'http://docs.evostream.com/sample_content/assets/sintel1m720p.mp4',
-    )
-)
-idle()
-```
-
 ## Features
 - Prebuilt wheels for macOS, Linux and Windows.
-- Supporting all type of MTProto libraries: Pyrogram, Telethon and Hydrogram.
+- Supporting all type of MTProto libraries: Telethon.
 - Work with voice chats in channels and chats.
 - Join as channels or chats.
 - Mute/unmute, pause/resume, stop/play, volume control and more...
@@ -61,10 +19,7 @@ Here's how to install the PyTgCalls lib, the commands are given below:
 
 ``` bash
 # With Git
-pip install git+https://github.com/pytgcalls/pytgcalls -U
-
-# With PyPi (Recommended)
-pip install py-tgcalls -U
+pip install git+https://github.com/Codwizer/pytgcalls -U
 ```
 
 ## Key Contributors
