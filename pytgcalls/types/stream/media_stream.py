@@ -35,7 +35,7 @@ class MediaStream(Stream):
 
         def __repr__(self):
             cls_name = self.__class__.__name__
-            return f'{cls_name}.{self.name}'
+            return f"{cls_name}.{self.name}"
 
     @statictypes
     def __init__(
@@ -96,12 +96,12 @@ class MediaStream(Stream):
 
         super().__init__(
             stream_audio=None
-            if self._audio_flags & MediaStream.Flags.IGNORE else
-            AudioStream(
+            if self._audio_flags & MediaStream.Flags.IGNORE
+            else AudioStream(
                 self._flags(self._audio_flags),
-                ' '.join(
+                " ".join(
                     build_command(
-                        'ffmpeg',
+                        "ffmpeg",
                         self._ffmpeg_parameters,
                         self._audio_path,
                         self._audio_parameters,
@@ -113,12 +113,12 @@ class MediaStream(Stream):
                 self._audio_parameters,
             ),
             stream_video=None
-            if self._video_flags & MediaStream.Flags.IGNORE else
-            VideoStream(
+            if self._video_flags & MediaStream.Flags.IGNORE
+            else VideoStream(
                 self._flags(self._video_flags),
-                ' '.join(
+                " ".join(
                     build_command(
-                        'ffmpeg',
+                        "ffmpeg",
                         self._ffmpeg_parameters,
                         self._media_path,
                         self._video_parameters,
@@ -155,16 +155,16 @@ class MediaStream(Stream):
                     )
                 except ImageSourceFound:
                     image_commands = [
-                        '-loop',
-                        '1',
-                        '-framerate',
-                        '1',
+                        "-loop",
+                        "1",
+                        "-framerate",
+                        "1",
                     ]
                 except LiveStreamFound:
                     live_stream = True
-                self.stream_video.path = ' '.join(
+                self.stream_video.path = " ".join(
                     build_command(
-                        'ffmpeg',
+                        "ffmpeg",
                         self._ffmpeg_parameters,
                         self._media_path,
                         self._video_parameters,
@@ -178,8 +178,7 @@ class MediaStream(Stream):
                     raise e
                 self.stream_video = None
 
-        self._audio_path = self._audio_path \
-            if self._audio_path else self._media_path
+        self._audio_path = self._audio_path if self._audio_path else self._media_path
 
         if not self._audio_flags & MediaStream.Flags.IGNORE:
             if YtDlp.is_valid(self._audio_path):
@@ -203,9 +202,9 @@ class MediaStream(Stream):
                     )
                 except LiveStreamFound:
                     live_stream = True
-                self.stream_audio.path = ' '.join(
+                self.stream_audio.path = " ".join(
                     build_command(
-                        'ffmpeg',
+                        "ffmpeg",
                         self._ffmpeg_parameters,
                         self._audio_path,
                         self._audio_parameters,
@@ -223,7 +222,8 @@ class MediaStream(Stream):
     def _filter_flags(flags: Optional[Flags]) -> Flags:
         combined_flags = [
             MediaStream.Flags.AUTO_DETECT,
-            MediaStream.Flags.IGNORE, MediaStream.Flags.REQUIRED,
+            MediaStream.Flags.IGNORE,
+            MediaStream.Flags.REQUIRED,
         ]
         combined_flags_value = MediaStream.Flags(
             sum([flag.value for flag in combined_flags]),

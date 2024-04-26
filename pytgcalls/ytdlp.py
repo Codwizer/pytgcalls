@@ -11,10 +11,10 @@ from .types.raw import VideoParameters
 
 class YtDlp:
     YOUTUBE_REGX = re.compile(
-        r'^((?:https?:)?//)?((?:www|m)\.)?'
-        r'(youtube(-nocookie)?\.com|youtu.be)'
-        r'(/(?:[\w\-]+\?v=|embed/|live/|v/)?)'
-        r'([\w\-]+)(\S+)?$',
+        r"^((?:https?:)?//)?((?:www|m)\.)?"
+        r"(youtube(-nocookie)?\.com|youtu.be)"
+        r"(/(?:[\w\-]+\?v=|embed/|live/|v/)?)"
+        r"([\w\-]+)(\S+)?$",
     )
 
     @staticmethod
@@ -31,22 +31,22 @@ class YtDlp:
             return None, None
 
         commands = [
-            'yt-dlp',
-            '-g',
-            '-f',
-            f'best[width<=?{video_parameters.width}]'
-            f'[height<=?{video_parameters.height}]',
-            '--no-warnings',
+            "yt-dlp",
+            "-g",
+            "-f",
+            f"best[width<=?{video_parameters.width}]"
+            f"[height<=?{video_parameters.height}]",
+            "--no-warnings",
         ]
 
         if add_commands:
             commands += await cleanup_commands(
                 shlex.split(add_commands),
-                'yt-dlp',
+                "yt-dlp",
                 [
-                    '-f',
-                    '-g',
-                    '--no-warnings',
+                    "-f",
+                    "-g",
+                    "--no-warnings",
                 ],
             )
 
@@ -65,12 +65,12 @@ class YtDlp:
                 )
             except asyncio.TimeoutError:
                 proc.terminate()
-                raise YtDlpError('yt-dlp process timeout')
+                raise YtDlpError("yt-dlp process timeout")
             if stderr:
                 raise YtDlpError(stderr.decode())
-            data = stdout.decode().strip().split('\n')
+            data = stdout.decode().strip().split("\n")
             if data:
                 return data[0], data[1] if len(data) >= 2 else data[0]
-            raise YtDlpError('No video URLs found')
+            raise YtDlpError("No video URLs found")
         except FileNotFoundError:
-            raise YtDlpError('yt-dlp is not installed on your system')
+            raise YtDlpError("yt-dlp is not installed on your system")

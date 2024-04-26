@@ -93,5 +93,5 @@ pip install py-tgcalls -U
   A heartfelt thank you to Evgeny Nadymov for graciously allowing us to use their code from telegram-react.
   His contribution has been pivotal to the success of this project.
 
-[NTgCalls]: https://github.com/pytgcalls/ntgcalls
 [@evgeny-nadymov]: https://github.com/evgeny-nadymov/
+[NTgCalls]: https://github.com/pytgcalls/ntgcalls

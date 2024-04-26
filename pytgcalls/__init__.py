@@ -5,9 +5,9 @@ from .sync import compose
 from .sync import idle
 
 __all__ = (
-    '__version__',
-    'compose',
-    'CustomApi',
-    'PyTgCalls',
-    'idle',
+    "__version__",
+    "compose",
+    "CustomApi",
+    "PyTgCalls",
+    "idle",
 )

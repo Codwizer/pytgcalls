@@ -13,13 +13,13 @@ class PyObject:
             return repr(obj)
         if isinstance(obj, Enum):
             return repr(obj)
-        if hasattr(obj, '__dict__'):
+        if hasattr(obj, "__dict__"):
             return {
-                '_': obj.__class__.__name__,
+                "_": obj.__class__.__name__,
                 **{
                     attr: vars(obj)[attr]
                     for attr in vars(obj)
-                    if not attr.startswith('_')
+                    if not attr.startswith("_")
                 },
             }
         return {}

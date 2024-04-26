@@ -338,7 +338,7 @@ class TelethonClient(BridgedClient):
                         call=input_call,
                         ids=[],
                         sources=[],
-                        offset='',
+                        offset="",
                         limit=500,
                     ),
                 )
@@ -379,7 +379,7 @@ class TelethonClient(BridgedClient):
                 if isinstance(update, UpdateGroupCallConnection):
                     return update.params.data
 
-        return json.dumps({'transport': None})
+        return json.dumps({"transport": None})
 
     async def request_call(
         self,

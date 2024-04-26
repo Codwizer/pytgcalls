@@ -23,7 +23,7 @@ from ...types import RawCallUpdate
 from ...types.raw import Stream
 from ..utilities.stream_params import StreamParams
 
-py_logger = logging.getLogger('pytgcalls')
+py_logger = logging.getLogger("pytgcalls")
 
 
 class Play(Scaffold):
@@ -42,7 +42,7 @@ class Play(Scaffold):
             config = GroupCallConfig() if not is_p2p else CallConfig()
         if not is_p2p and not isinstance(config, GroupCallConfig):
             raise ValueError(
-                'Group call config must be provided for group calls',
+                "Group call config must be provided for group calls",
             )
         media_description = await StreamParams.get_stream_params(
             stream,
@@ -60,8 +60,7 @@ class Play(Scaffold):
         if isinstance(config, GroupCallConfig):
             self._cache_user_peer.put(
                 chat_id,
-                self._cache_local_peer
-                if config.join_as is None else config.join_as,
+                self._cache_local_peer if config.join_as is None else config.join_as,
             )
 
             chat_call = await self._app.get_full_chat(
@@ -153,8 +152,8 @@ class Play(Scaffold):
                     if retries == 3 or is_p2p:
                         raise
                     (py_logger.warning if retries >= 1 else py_logger.info)(
-                        f'Telegram is having some internal server issues. '
-                        f'Retrying {retries + 1} of 3',
+                        f"Telegram is having some internal server issues. "
+                        f"Retrying {retries + 1} of 3",
                     )
                 except Exception:
                     try:
@@ -170,9 +169,13 @@ class Play(Scaffold):
                     chat_id,
                 )
                 for x in participants:
-                    if x.user_id == BridgedClient.chat_id(
-                        self._cache_local_peer,
-                    ) and x.muted_by_admin:
+                    if (
+                        x.user_id
+                        == BridgedClient.chat_id(
+                            self._cache_local_peer,
+                        )
+                        and x.muted_by_admin
+                    ):
                         self._need_unmute.add(chat_id)
         except FileError as e:
             raise FileNotFoundError(e)

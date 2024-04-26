@@ -5,9 +5,9 @@ from .video_parameters import VideoParameters
 from .video_stream import VideoStream
 
 __all__ = (
-    'AudioStream',
-    'AudioParameters',
-    'Stream',
-    'VideoParameters',
-    'VideoStream',
+    "AudioStream",
+    "AudioParameters",
+    "Stream",
+    "VideoParameters",
+    "VideoStream",
 )

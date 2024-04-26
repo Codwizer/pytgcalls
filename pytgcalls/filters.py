@@ -39,7 +39,8 @@ class InvertFilter(Filter):
             x = await client.loop.run_in_executor(
                 client.executor,
                 self.base,
-                client, update,
+                client,
+                update,
             )
 
         return not x
@@ -111,14 +112,14 @@ class OrFilter(Filter):
         return x or y
 
 
-CUSTOM_FILTER_NAME = 'CustomFilter'
+CUSTOM_FILTER_NAME = "CustomFilter"
 
 
 def create(func: Callable, name: Optional[str] = None, **kwargs) -> Filter:
     return type(
         name or func.__name__ or CUSTOM_FILTER_NAME,
         (Filter,),
-        {'__call__': func, **kwargs},
+        {"__call__": func, **kwargs},
     )()
 
 
@@ -126,9 +127,14 @@ async def _me_filter(_, client: PyTgCalls, u: Update):
     if isinstance(u, UpdatedGroupCallParticipant):
         chat_peer = client.cache_user_peer.get(u.chat_id)
         if chat_peer:
-            return BridgedClient.chat_id(
-                chat_peer,
-            ) == u.participant.user_id if chat_peer else False
+            return (
+                BridgedClient.chat_id(
+                    chat_peer,
+                )
+                == u.participant.user_id
+                if chat_peer
+                else False
+            )
     return False
 
 
@@ -148,15 +154,11 @@ class chat(Filter, set):
         self,
         chats: Optional[Union[int, str, List[Union[int, str]]]] = None,
     ):
-        chats = [] if chats is None else chats \
-            if isinstance(chats, list) else [chats]
+        chats = [] if chats is None else chats if isinstance(chats, list) else [chats]
         super().__init__(chats)
 
     async def __call__(self, client: PyTgCalls, update: Update):
-        return any([
-            await client.resolve_chat_id(c) == update.chat_id
-            for c in self
-        ])
+        return any([await client.resolve_chat_id(c) == update.chat_id for c in self])
 
 
 # noinspection PyPep8Naming

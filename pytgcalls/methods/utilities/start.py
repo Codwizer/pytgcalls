@@ -23,12 +23,11 @@ from ...types import StreamVideoEnded
 from ...types import Update
 from ...types import UpdatedGroupCallParticipant
 
-py_logger = logging.getLogger('pytgcalls')
+py_logger = logging.getLogger("pytgcalls")
 
 
 class Start(Scaffold):
     async def start(self):
-
         @self._app.on_update()
         async def update_handler(update: Update):
             chat_id = update.chat_id
@@ -40,16 +39,14 @@ class Start(Scaffold):
                             p2p_config.wait_data.set_result(
                                 update,
                             )
-                    if isinstance(update, ChatUpdate) and \
-                            p2p_config.outgoing:
+                    if isinstance(update, ChatUpdate) and p2p_config.outgoing:
                         if update.status & ChatUpdate.Status.DISCARDED_CALL:
                             p2p_config.wait_data.set_exception(
                                 CallDeclined(
                                     chat_id,
                                 ),
                             )
-            if chat_id in self._wait_connect and \
-                    not self._wait_connect[chat_id].done():
+            if chat_id in self._wait_connect and not self._wait_connect[chat_id].done():
                 if isinstance(update, ChatUpdate):
                     if update.status & ChatUpdate.Status.DISCARDED_CALL:
                         self._wait_connect[chat_id].set_exception(
@@ -85,16 +82,21 @@ class Start(Scaffold):
                 action = participant.action
                 chat_peer = self._cache_user_peer.get(chat_id)
                 if chat_peer:
-                    is_self = BridgedClient.chat_id(
-                        chat_peer,
-                    ) == participant.user_id if chat_peer else False
+                    is_self = (
+                        BridgedClient.chat_id(
+                            chat_peer,
+                        )
+                        == participant.user_id
+                        if chat_peer
+                        else False
+                    )
                     if is_self:
                         if action == GroupCallParticipant.Action.LEFT:
                             await clear_call(chat_id)
                         if (
-                            chat_id in self._need_unmute and
-                            action == GroupCallParticipant.Action.UPDATED and
-                            not participant.muted_by_admin
+                            chat_id in self._need_unmute
+                            and action == GroupCallParticipant.Action.UPDATED
+                            and not participant.muted_by_admin
                         ):
                             try:
                                 await update_status(
@@ -105,8 +107,8 @@ class Start(Scaffold):
                                 pass
 
                         if (
-                            participant.muted_by_admin and
-                            action != GroupCallParticipant.Action.LEFT
+                            participant.muted_by_admin
+                            and action != GroupCallParticipant.Action.LEFT
                         ):
                             self._need_unmute.add(chat_id)
                         else:
@@ -134,14 +136,15 @@ class Start(Scaffold):
                     self._cache_user_peer.get(chat_id),
                 )
             except Exception as e:
-                py_logger.debug(f'SetVideoCallStatus: {e}')
+                py_logger.debug(f"SetVideoCallStatus: {e}")
 
         async def stream_ended(chat_id: int, stream: StreamType):
             await self.propagate(
                 StreamAudioEnded(
                     chat_id,
-                ) if stream == StreamType.AUDIO else
-                StreamVideoEnded(
+                )
+                if stream == StreamType.AUDIO
+                else StreamVideoEnded(
                     chat_id,
                 ),
                 self,
@@ -190,10 +193,10 @@ class Start(Scaffold):
             )
             if self._app.no_updates:
                 py_logger.warning(
-                    f'Using {self._app.package_name.capitalize()} '
-                    'client in no_updates mode is not recommended. '
-                    'This mode may cause unexpected behavior or '
-                    'limitations.',
+                    f"Using {self._app.package_name.capitalize()} "
+                    "client in no_updates mode is not recommended. "
+                    "This mode may cause unexpected behavior or "
+                    "limitations.",
                 )
             else:
                 self._handle_mtproto()

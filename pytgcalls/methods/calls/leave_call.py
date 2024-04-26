@@ -19,7 +19,7 @@ class LeaveCall(Scaffold):
         chat_id: Union[int, str],
     ):
         chat_id = await self.resolve_chat_id(chat_id)
-        if chat_id < 0:  # type: ignore
+        if chat_id < 0:  #type: ignore
             chat_call = await self._app.get_full_chat(
                 chat_id,
             )
@@ -32,8 +32,7 @@ class LeaveCall(Scaffold):
             )
         else:
             await self._app.discard_call(chat_id)
-        if chat_id in self._p2p_configs and \
-                not self._p2p_configs[chat_id].outgoing:
+        if chat_id in self._p2p_configs and not self._p2p_configs[chat_id].outgoing:
             self._p2p_configs.pop(chat_id)
             return
         try:

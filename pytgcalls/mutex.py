@@ -7,4 +7,5 @@ def mutex(func):
         self = args[0]
         async with self._lock:
             return await func(*args, **kwargs)
+
     return async_wrapper

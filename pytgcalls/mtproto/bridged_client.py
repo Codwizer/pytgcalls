@@ -12,7 +12,6 @@ from ..types import GroupCallParticipant
 
 
 class BridgedClient(HandlersHolder):
-
     async def get_call(
         self,
         chat_id: int,
@@ -126,7 +125,7 @@ class BridgedClient(HandlersHolder):
 
     @staticmethod
     def package_name(obj):
-        return str(obj.__class__.__module__).split('.')[0]
+        return str(obj.__class__.__module__).split(".")[0]
 
     @staticmethod
     def parse_participant(participant):
@@ -134,13 +133,11 @@ class BridgedClient(HandlersHolder):
             BridgedClient.chat_id(participant.peer),
             bool(participant.muted),
             bool(participant.muted) != bool(participant.can_self_unmute),
-            bool(participant.video) or
-            bool(participant.presentation),
+            bool(participant.video) or bool(participant.presentation),
             bool(participant.presentation),
             bool(participant.video),
             bool(participant.raise_hand_rating),
-            participant.volume // 100
-            if participant.volume is not None else 100,
+            participant.volume // 100 if participant.volume is not None else 100,
             bool(participant.just_joined),
             bool(participant.left),
         )
@@ -148,13 +145,13 @@ class BridgedClient(HandlersHolder):
     @staticmethod
     def chat_id(input_peer) -> int:
         class_name = input_peer.__class__.__name__
-        if class_name in ['PeerUser', 'InputPeerUser']:
+        if class_name in ["PeerUser", "InputPeerUser"]:
             return input_peer.user_id
-        elif class_name in ['Channel', 'ChannelForbidden']:
+        elif class_name in ["Channel", "ChannelForbidden"]:
             return -1000000000000 - input_peer.id
-        elif hasattr(input_peer, 'channel_id'):
+        elif hasattr(input_peer, "channel_id"):
             return -1000000000000 - input_peer.channel_id
-        elif class_name == 'Chat':
+        elif class_name == "Chat":
             return -input_peer.id
         else:
             return -input_peer.chat_id
@@ -162,9 +159,9 @@ class BridgedClient(HandlersHolder):
     @staticmethod
     def user_from_call(call) -> Optional[int]:
         class_name = call.__class__.__name__
-        if class_name in ['PhoneCallAccepted', 'PhoneCallWaiting']:
+        if class_name in ["PhoneCallAccepted", "PhoneCallWaiting"]:
             return call.participant_id
-        elif class_name in ['PhoneCallRequested', 'PhoneCall']:
+        elif class_name in ["PhoneCallRequested", "PhoneCall"]:
             return call.admin_id
         return None
 
@@ -182,8 +179,9 @@ class BridgedClient(HandlersHolder):
                 server.stun,
                 False,
                 None,
-            ) if server.__class__.__name__ == 'PhoneConnectionWebrtc' else
-            RTCServer(
+            )
+            if server.__class__.__name__ == "PhoneConnectionWebrtc"
+            else RTCServer(
                 server.id,
                 server.ip,
                 server.ipv6,

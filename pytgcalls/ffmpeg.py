@@ -33,7 +33,7 @@ async def check_stream(
         ffprobe = await asyncio.create_subprocess_exec(
             *await cleanup_commands(
                 build_command(
-                    'ffprobe',
+                    "ffprobe",
                     ffmpeg_parameters,
                     path,
                     stream_parameters,
@@ -46,17 +46,17 @@ async def check_stream(
             stderr=asyncio.subprocess.PIPE,
         )
     except FileNotFoundError:
-        raise FFmpegError('ffprobe not installed')
+        raise FFmpegError("ffprobe not installed")
 
     try:
         stdout, stderr = await asyncio.wait_for(
             ffprobe.communicate(),
             timeout=20,
         )
-        result = loads(stdout.decode('utf-8')) or {}
-        stream_list = result.get('streams', [])
-        format_content = result.get('format', [])
-        if 'No such file' in stderr.decode('utf-8'):
+        result = loads(stdout.decode("utf-8")) or {}
+        stream_list = result.get("streams", [])
+        format_content = result.get("format", [])
+        if "No such file" in stderr.decode("utf-8"):
             raise FileNotFoundError()
     except (subprocess.TimeoutExpired, JSONDecodeError):
         ffprobe.terminate()
@@ -70,17 +70,17 @@ async def check_stream(
     original_width, original_height = 0, 0
 
     for stream in stream_list:
-        codec_type = stream.get('codec_type', '')
-        codec_name = stream.get('codec_name', '')
-        image_codecs = ['png', 'jpeg', 'jpg', 'mjpeg']
-        if codec_type == 'video':
+        codec_type = stream.get("codec_type", "")
+        codec_name = stream.get("codec_name", "")
+        image_codecs = ["png", "jpeg", "jpg", "mjpeg"]
+        if codec_type == ["video", "gif"]:
             is_image = codec_name in image_codecs
             have_video = True
-            original_width = int(stream.get('width', 0))
-            original_height = int(stream.get('height', 0))
+            original_width = int(stream.get("width", 0))
+            original_height = int(stream.get("height", 0))
             if original_height and original_width:
                 have_valid_video = True
-        elif codec_type == 'audio':
+        elif codec_type == "audio":
             have_audio = True
 
     if isinstance(stream_parameters, VideoParameters):
@@ -88,7 +88,7 @@ async def check_stream(
             raise NoVideoSourceFound(path)
         if not have_valid_video:
             raise InvalidVideoProportion(
-                'Video proportion not found',
+                "Video proportion not found",
             )
 
         ratio = float(original_width) / original_height
@@ -110,7 +110,7 @@ async def check_stream(
     if isinstance(stream_parameters, AudioParameters) and not have_audio:
         raise NoAudioSourceFound(path)
 
-    if 'duration' not in format_content:
+    if "duration" not in format_content:
         raise LiveStreamFound(path)
 
 
@@ -122,7 +122,7 @@ async def cleanup_commands(
     try:
         proc_res = await asyncio.create_subprocess_exec(
             commands[0] if not process_name else process_name,
-            '-h',
+            "-h",
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
         )
@@ -131,24 +131,25 @@ async def cleanup_commands(
                 proc_res.communicate(),
                 timeout=20,
             )
-            result = stdout.decode('utf-8')
+            result = stdout.decode("utf-8")
         except (subprocess.TimeoutExpired, JSONDecodeError):
             proc_res.terminate()
             raise
-        supported = re.findall(r'(?m)^ *(-.*?)\s+', result)
+        supported = re.findall(r"(?m)^ *(-.*?)\s+", result)
         new_commands = []
         ignore_next = False
 
         for v in commands:
             if len(v) > 0:
-                if v[0] == '-':
-                    ignore_next = v not in supported or \
-                        blacklist is not None and v in blacklist
+                if v[0] == "-":
+                    ignore_next = (
+                        v not in supported or blacklist is not None and v in blacklist
+                    )
                 if not ignore_next:
                     new_commands += [v]
         return new_commands
     except FileNotFoundError:
-        raise FFmpegError(f'{commands[0]} not installed')
+        raise FFmpegError(f"{commands[0]} not installed")
 
 
 def build_command(
@@ -165,37 +166,35 @@ def build_command(
     command = _get_stream_params(ffmpeg_parameters)
 
     if isinstance(stream_parameters, VideoParameters):
-        command = command['video']
+        command = command["video"]
     else:
-        command = command['audio']
+        command = command["audio"]
 
     ffmpeg_command: List = [name]
 
-    ffmpeg_command += command['start']
+    ffmpeg_command += command["start"]
 
-    if not os.path.exists(path) \
-            and not is_livestream\
-            and name == 'ffmpeg':
+    if not os.path.exists(path) and not is_livestream and name == "ffmpeg":
         ffmpeg_command += [
-            '-reconnect',
-            '1',
-            '-reconnect_at_eof',
-            '1',
-            '-reconnect_streamed',
-            '1',
-            '-reconnect_delay_max',
-            '2',
+            "-reconnect",
+            "1",
+            "-reconnect_at_eof",
+            "1",
+            "-reconnect_streamed",
+            "1",
+            "-reconnect_delay_max",
+            "2",
         ]
 
-    if name == 'ffprobe':
+    if name == "ffprobe":
         ffmpeg_command += [
-            '-v',
-            'error',
-            '-show_entries',
-            'stream=width,height,codec_type,codec_name',
-            '-show_format',
-            '-of',
-            'json',
+            "-v",
+            "error",
+            "-show_entries",
+            "stream=width,height,codec_type,codec_name",
+            "-show_format",
+            "-of",
+            "json",
         ]
 
     if before_commands:
@@ -203,28 +202,28 @@ def build_command(
 
     if headers is not None:
         for i in headers:
-            ffmpeg_command.append('-headers')
+            ffmpeg_command.append("-headers")
             ffmpeg_command.append(f'"{i}: {headers[i]}"')
 
     ffmpeg_command += [
-        '-nostdin',
-        '-i',
-        f'"{path}"' if name == 'ffmpeg' else path,
+        "-nostdin",
+        "-i",
+        f'"{path}"' if name == "ffmpeg" else path,
     ]
-    ffmpeg_command += command['mid']
+    ffmpeg_command += command["mid"]
 
-    if name == 'ffmpeg':
+    if name == "ffmpeg":
         ffmpeg_command += _build_ffmpeg_options(stream_parameters)
 
-    ffmpeg_command += command['end']
-    if name == 'ffmpeg':
-        ffmpeg_command.append('pipe:1')
+    ffmpeg_command += command["end"]
+    if name == "ffmpeg":
+        ffmpeg_command.append("pipe:1")
 
     return ffmpeg_command
 
 
 def _get_stream_params(command: Optional[str]):
-    arg_names = ['base', 'audio', 'video']
+    arg_names = ["base", "audio", "video"]
     command_args: Dict = {arg: [] for arg in arg_names}
     current_arg = arg_names[0]
 
@@ -250,7 +249,7 @@ def _get_stream_params(command: Optional[str]):
 
 
 def _extract_stream_params(command: List[str]):
-    arg_names = ['start', 'mid', 'end']
+    arg_names = ["start", "mid", "end"]
     command_args: Dict = {arg: [] for arg in arg_names}
     current_arg = arg_names[0]
 
@@ -265,25 +264,32 @@ def _extract_stream_params(command: List[str]):
 
 
 def _build_ffmpeg_options(
-        stream_parameters: Union[AudioParameters, VideoParameters],
+    stream_parameters: Union[AudioParameters, VideoParameters],
 ) -> List[str]:
     log_level = logging.getLogger().level
-    ffmpeg_level = 'info' if log_level == logging.DEBUG else 'quiet'
+    ffmpeg_level = "info" if log_level == logging.DEBUG else "quiet"
 
-    options = ['-v', ffmpeg_level, '-f']
+    options = ["-v", ffmpeg_level, "-f"]
 
     if isinstance(stream_parameters, AudioParameters):
-        options.extend([
-            's16le',
-            '-ac', str(stream_parameters.channels),
-            '-ar', str(stream_parameters.bitrate),
-        ])
+        options.extend(
+            [
+                "s16le",
+                "-ac",
+                str(stream_parameters.channels),
+                "-ar",
+                str(stream_parameters.bitrate),
+            ]
+        )
     elif isinstance(stream_parameters, VideoParameters):
-        options.extend([
-            'rawvideo',
-            '-r', str(stream_parameters.frame_rate),
-            '-vf',
-            f'scale={stream_parameters.width}:{stream_parameters.height}',
-        ])
+        options.extend(
+            [
+                "rawvideo",
+                "-r",
+                str(stream_parameters.frame_rate),
+                "-vf",
+                f"scale={stream_parameters.width}:{stream_parameters.height}",
+            ]
+        )
 
     return options

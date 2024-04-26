@@ -9,7 +9,7 @@ from ..types.chats import GroupCallParticipant
 from ..types.participant_list import ParticipantList
 from .bridged_client import BridgedClient
 
-py_logger = logging.getLogger('pytgcalls')
+py_logger = logging.getLogger("pytgcalls")
 
 
 class ClientCache:
@@ -30,12 +30,12 @@ class ClientCache:
     ) -> Optional[Any]:
         full_chat = self._full_chat_cache.get(chat_id)
         if full_chat is not None:
-            py_logger.debug('FullChat cache hit for %d', chat_id)
+            py_logger.debug("FullChat cache hit for %d", chat_id)
             return full_chat
         else:
             # noinspection PyBroadException
             try:
-                py_logger.debug('FullChat cache miss for %d', chat_id)
+                py_logger.debug("FullChat cache miss for %d", chat_id)
                 full_chat = await self._app.get_call(chat_id)
                 self.set_cache(
                     chat_id,
@@ -53,15 +53,11 @@ class ClientCache:
     ) -> Optional[GroupCallParticipant]:
         chat_id = self.get_chat_id(input_id)
         if chat_id is not None:
-            participants: Optional[
-                ParticipantList
-            ] = self._call_participants_cache.get(
+            participants: Optional[ParticipantList] = self._call_participants_cache.get(
                 chat_id,
             )
             if participants is not None:
-                participants.last_mtproto_update = (
-                    int(time()) + self._cache_duration
-                )
+                participants.last_mtproto_update = int(time()) + self._cache_duration
                 return participants.update_participant(participant)
         return None
 
@@ -73,9 +69,7 @@ class ClientCache:
             chat_id,
         )
         if input_call is not None:
-            participants: Optional[
-                ParticipantList
-            ] = self._call_participants_cache.get(
+            participants: Optional[ParticipantList] = self._call_participants_cache.get(
                 chat_id,
             )
             if participants is not None:
@@ -83,7 +77,8 @@ class ClientCache:
                 curr_time = int(time())
                 if not (last_update - curr_time > 0):
                     py_logger.debug(
-                        'GetParticipant cache miss for %d', chat_id,
+                        "GetParticipant cache miss for %d",
+                        chat_id,
                     )
                     try:
                         list_participants = await self._app.get_participants(
@@ -95,9 +90,9 @@ class ClientCache:
                                 participant,
                             )
                     except Exception as e:
-                        py_logger.error('Error for %s in %d', e, chat_id)
+                        py_logger.error("Error for %s in %d", e, chat_id)
                 else:
-                    py_logger.debug('GetParticipant cache hit for %d', chat_id)
+                    py_logger.debug("GetParticipant cache hit for %d", chat_id)
                 return participants.get_participants()
         return []
 

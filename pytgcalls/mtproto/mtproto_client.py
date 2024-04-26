@@ -18,21 +18,10 @@ class MtProtoClient:
     ):
         self._bind_client: Optional[BridgedClient] = None
         self.package_name = BridgedClient.package_name(client)
-        if self.package_name == 'pyrogram':
-            from .pyrogram_client import PyrogramClient
-            self._bind_client = PyrogramClient(
-                cache_duration,
-                client,
-            )
-        elif self.package_name == 'telethon':
+        if self.package_name == "telethon":
             from .telethon_client import TelethonClient
+
             self._bind_client = TelethonClient(
-                cache_duration,
-                client,
-            )
-        elif self.package_name == 'hydrogram':
-            from .hydrogram_client import HydrogramClient
-            self._bind_client = HydrogramClient(
                 cache_duration,
                 client,
             )
